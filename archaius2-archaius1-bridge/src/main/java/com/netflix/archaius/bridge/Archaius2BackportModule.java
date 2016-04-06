@@ -22,7 +22,7 @@ public final class Archaius2BackportModule extends AbstractModule {
     @Provides 
     @Singleton
     ConfigProxyFactory getConfigProxyFactory() {
-        return new ConfigProxyFactory(new CommonsToConfig(ConfigurationManager.getConfigInstance()));
+        return new BackportingConfigProxyFactory(new CommonsToConfig(ConfigurationManager.getConfigInstance()));
     }
     
     @Override
