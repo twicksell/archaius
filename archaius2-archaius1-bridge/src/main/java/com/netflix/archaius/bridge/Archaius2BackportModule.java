@@ -4,8 +4,10 @@ import javax.inject.Singleton;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.netflix.archaius.ConfigProxyFactory;
-import com.netflix.archaius.commons.CommonsToConfig;
+import com.netflix.archaius.api.Config;
+import com.netflix.archaius.api.config.SettableConfig;
 import com.netflix.config.ConfigurationManager;
 
 /**
@@ -17,12 +19,14 @@ public final class Archaius2BackportModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(Config.class).to(Archaius1DelegatingConfig.class).in(Scopes.SINGLETON);
+        bind(SettableConfig.class).to(Archaius1DelegatingConfig.class).in(Scopes.SINGLETON);
     }
-
+    
     @Provides 
     @Singleton
-    ConfigProxyFactory getConfigProxyFactory() {
-        return new BackportingConfigProxyFactory(new CommonsToConfig(ConfigurationManager.getConfigInstance()));
+    ConfigProxyFactory getConfigProxyFactory(Config config) {
+        return new BackportingConfigProxyFactory(config);
     }
     
     @Override
