@@ -124,7 +124,7 @@ public class ConfigProxyFactory {
      *
      * @param <T>
      */
-    private static interface MethodInvoker<T> {
+    protected static interface MethodInvoker<T> {
         /**
          * Invoke the method with the provided arguments
          * @param args
@@ -298,14 +298,18 @@ public class ConfigProxyFactory {
             }
         };
     }
+    
+    protected Config getConfig() {
+        return config;
+    }
 
-    private <T> MethodInvoker<T> createDynamicProperty(final Class<T> type, final String propName, final String defaultValue) {
+    protected <T> MethodInvoker<T> createDynamicProperty(final Class<T> type, final String propName, final String defaultValue) {
         final Property<T> prop = propertyFactory
                 .getProperty(propName)
                 .asType(type, defaultValue != null 
                     // This is a hack to force interpolation of the defaultValue assuming
                     // that ther is never a property '*'
-                    ? decoder.decode(type, config.getString("*", defaultValue)) 
+                    ? decoder.decode(type, getConfig().getString("*", defaultValue)) 
                     : null);
         return new MethodInvoker<T>() {
             @Override
