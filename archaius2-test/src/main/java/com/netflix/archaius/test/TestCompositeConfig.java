@@ -3,6 +3,8 @@ package com.netflix.archaius.test;
 import java.util.Iterator;
 import java.util.Properties;
 
+import javax.inject.Inject;
+
 import com.netflix.archaius.api.Config;
 import com.netflix.archaius.api.config.SettableConfig;
 import com.netflix.archaius.config.DefaultCompositeConfig;
@@ -18,14 +20,20 @@ public class TestCompositeConfig extends DefaultCompositeConfig implements Setta
     private static final String METHOD_LEVEL_LAYER_NAME =   "METHOD_LEVEL_TEST_OVERRIDES";
     private static final String RUNTIME_LAYER_NAME =        "RUNTIME";
     
-    public TestCompositeConfig(SettableConfig classLevelOverrides, SettableConfig methodLevelOverrides) {
+    
+    public TestCompositeConfig(SettableConfig runtimeConfig, SettableConfig classLevelOverrides, SettableConfig methodLevelOverrides) {
         try {
-            addConfig(RUNTIME_LAYER_NAME, new DefaultSettableConfig());
+            addConfig(RUNTIME_LAYER_NAME, runtimeConfig);
             addConfig(METHOD_LEVEL_LAYER_NAME, methodLevelOverrides);
             addConfig(CLASS_LEVEL_LAYER_NAME, classLevelOverrides);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    @Deprecated
+    public TestCompositeConfig(SettableConfig classLevelOverrides, SettableConfig methodLevelOverrides) {
+        this(new DefaultSettableConfig(), classLevelOverrides, methodLevelOverrides);
     }
     
     public void resetForTest() {
